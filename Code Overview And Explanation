@@ -1,0 +1,141 @@
+MyEigthSQLProject-CodeReview
+Description: Professional review and explanation of all SQL transformations, cleaning, and BIT datatype usage applied to the heart_disease_uci dataset. Includes a step-by-step breakdown of every command.
+
+1. Database Creation
+CREATE DATABASE MyEigthSQLProject;
+USE MyEigthSQLProject;
+Explanation:
+Created a dedicated database for this project.
+USE MyEigthSQLProject ensures all subsequent commands operate within this database.
+Why it matters: Separates this project from other databases for clean testing and experimentation.
+
+2. Analyzing Table Structure
+SELECT COLUMN_NAME, DATA_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'heart_disease_uci';
+Explanation:
+Lists every column and its current datatype.
+Purpose: Identify columns suitable for BIT conversion (Boolean logic) or other adjustments.
+Skill demonstrated: Careful dataset inspection before making changes.
+
+3. Initial Data Analysis
+SELECT * FROM heart_disease_uci;
+
+Explanation:
+
+Displays all rows and columns in the dataset.
+Purpose: Helps identify missing values, inconsistent entries, and columns suitable for the BIT datatype.
+
+4. Converting Gender to BIT
+UPDATE heart_disease_uci
+SET SEX = 1
+WHERE SEX = 'Male';
+
+UPDATE heart_disease_uci
+SET SEX = 0
+WHERE SEX = 'Female';
+
+Explanation:
+Converts textual gender data into BIT: 1 = Male, 0 = Female.
+Why: Boolean values are more efficient for storage and easier to use in queries, filters, or analytics.
+
+5. Working with Fasting Blood Sugar (FBS)
+UPDATE heart_disease_uci SET FBS = 1; -- Turns the switch on for everyone
+UPDATE heart_disease_uci SET FBS = 0; -- Turns the switch off for everyone
+
+Explanation:
+Shows ability to update all values in a column at once.
+Useful for resetting or standardizing dataset values before applying logic per row.
+
+UPDATE heart_disease_uci SET FBS = ~FBS;
+UPDATE heart_disease_uci SET FBS = 1 - FBS;
+
+Explanation:
+Demonstrates two ways to flip BIT values:
+Bitwise NOT (~)
+Arithmetic (1 - value)
+Professional skill: Shows understanding of multiple approaches to achieve the same logic.
+6. Conditional Updates with CASE
+UPDATE heart_disease_uci SET FBS = CASE
+WHEN FBS > 1 THEN ELSE 0 END;
+Explanation:
+Conditional logic ensures only invalid or specific values are corrected.
+
+Purpose: Clean dataset while avoiding unintentional overwrites.
+7. Handling NULL Values with ISNULL()
+UPDATE heart_disease_uci SET thal = ISNULL(thal, 0);
+UPDATE heart_disease_uci SET chol = ISNULL(chol, 0);
+UPDATE heart_disease_uci SET thalch = ISNULL(thalch, 3);
+UPDATE heart_disease_uci SET fbs = ISNULL(fbs, 3);
+UPDATE heart_disease_uci SET trestbps = ISNULL(trestbps, 0);
+UPDATE heart_disease_uci SET ca = ISNULL(ca, 3);
+UPDATE heart_disease_uci SET slope = ISNULL(slope, 0);
+UPDATE heart_disease_uci SET exang = ISNULL(exang, 0);
+UPDATE heart_disease_uci SET oldpeak = ISNULL(oldpeak, 0);
+UPDATE heart_disease_uci SET restecg = ISNULL(restecg, 0);
+
+Explanation:
+Replaces NULL values with defaults to prevent errors in queries and calculations.
+Examples:
+3 indicates absence of a feature (e.g., thalch, ca)
+0 indicates false/none/zero values.
+Skill demonstrated: Proper data cleaning, ensuring robust dataset for analysis.
+
+8. Setting Multiple Columns
+UPDATE heart_disease_uci SET FBS = 0, SEX = 1;
+UPDATE heart_disease_uci SET FBS = 1, SEX = 1 WHERE id = 9;
+Explanation:
+Updates multiple columns in one command.
+Conditional update on a specific row (WHERE id = 9) demonstrates targeted data manipulation.
+9. Copying Values Between Columns
+UPDATE heart_disease_uci SET FBS = SEX;
+Explanation:
+Copies values from one column to another.
+Use case: Align or sync Boolean values across columns when required.
+
+10. Using Temporary Variables
+DECLARE @MyBit BIT;
+SET @MyBit = 1;
+SET @MyBit = (SELECT TOP 1 sex FROM heart_disease_uci);
+IF @MyBit = 1 SET @MyBit = 0;
+
+Explanation:
+@MyBit acts as a temporary storage variable.
+Demonstrates procedural SQL:
+Fetch a value
+Store it in a variable
+Apply conditional logic
+Professional note: Shows ability to write reusable and procedural SQL code.
+
+11. Handling Non-Zero Values
+update heart_disease_uci SET fbs = 99;
+Explanation:
+Example of testing data against rules.
+Later logic can convert non-zero numbers to 1 for BIT compliance.
+12. Enforcing SQL Standards
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+Explanation:
+
+SET ANSI_NULLS ON: Ensures proper comparison of NULLs (NULL = NULL returns false unless handled).
+SET QUOTED_IDENTIFIER ON: Allows use of quoted identifiers ("ColumnName" or 'TextValue') safely.
+Why: Ensures queries behave predictably, especially in professional or production environments.
+
+13. Project Outcome
+By the end of this project:
+
+SEX and FBS are standardized as BIT columns.
+Null values replaced with meaningful defaults.
+Conditional logic ensures accurate updates.
+Temporary variables demonstrate procedural logic.
+ANSI standards applied for production-ready SQL.
+Dataset is clean, consistent, and ready for analysis or integration into applications.
+Professional Skills Demonstrated
+Data cleaning and transformation.
+Advanced BIT datatype usage.
+Conditional and bulk updates.
+Handling NULLs and missing data.
+Use of temporary variables for procedural operations.
+SQL Server best practices and standards compliance.
+
+Preparing datasets for analytics or backend applications.
